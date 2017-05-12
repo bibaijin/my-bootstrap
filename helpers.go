@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"os/user"
+	"strings"
 )
 
 func infof(format string, a ...interface{}) {
@@ -19,6 +21,11 @@ func errorf(format string, a ...interface{}) {
 	_printf('1', format, a...)
 }
 
+func fatalf(format string, a ...interface{}) {
+	errorf(format, a...)
+	os.Exit(1)
+}
+
 func _printf(level byte, format string, a ...interface{}) {
 	var buf bytes.Buffer
 	buf.WriteString("\033[0;3")
@@ -29,17 +36,33 @@ func _printf(level byte, format string, a ...interface{}) {
 	fmt.Printf(buf.String(), a...)
 }
 
+func which(executable string) (string, error) {
+	cmd := exec.Command("which", executable)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		errorf("\t%s", out)
+		return "", err
+	}
+
+	return strings.TrimSpace(string(out)), nil
+}
+
 func runCmd(cmd *exec.Cmd) error {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
-	if err := cmd.Start(); err != nil {
-		return err
-	}
-
-	if err := cmd.Wait(); err != nil {
+	if err := cmd.Run(); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func getHomeDir() (string, error) {
+	u, err := user.Current()
+	if err != nil {
+		return "", err
+	}
+
+	return u.HomeDir, nil
 }

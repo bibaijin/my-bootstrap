@@ -1,6 +1,9 @@
 # 环境变量
 set -x GOPATH ~/Projects/go
-set -x PATH $GOPATH/bin $PATH
+set -x PATH $GOPATH/bin ~/.local/bin $PATH
+set -x EDITOR vim
+set -x LC_CTYPE zh_CN.UTF-8     # 中文处理
+set -x LC_COLLATE zh_CN.UTF-8   # 中文排序
 
 # 提示符
 function fish_prompt
@@ -54,7 +57,10 @@ function fish_right_prompt
   else
     set_color 666666
   end
-  printf '[%d]' $exit_code
+  echo -n '['$exit_code']'
 
   set_color normal
 end
+
+# 别名
+alias yxapp="ssh kaizhang33@relay.creditease.corp"
