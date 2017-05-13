@@ -66,3 +66,27 @@ func getHomeDir() (string, error) {
 
 	return u.HomeDir, nil
 }
+
+func symlink(oldname, newname string) error {
+	homeDir, err := getHomeDir()
+	if err != nil {
+		return err
+	}
+
+	cwd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	err = os.Symlink(cwd+oldname, homeDir+newname)
+	if err != nil {
+		if os.IsExist(err) {
+			warnf("\t~%s already exists, skipped.", newname)
+			return nil
+		}
+
+		return err
+	}
+
+	return nil
+}
