@@ -17,6 +17,7 @@ func init() {
 	xdgPrograms = []string{
 		"fish",
 		"git",
+		"LaTeX",
 	}
 	dotfiles = []string{
 		"spacemacs",
