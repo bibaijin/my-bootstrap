@@ -7,12 +7,14 @@ import (
 )
 
 func init() {
-	toInstallSoftwares = []string{
+	toInstallPrograms = []string{
 		"fish",
 		"git",
 		"vim",
 		"emacs",
 	}
+
+	toInstallLibs = []string{}
 
 	infof("Installing brew...")
 	if err := installBrew(); err != nil {
@@ -46,17 +48,39 @@ func installBrew() error {
 	return nil
 }
 
-func install(software string) error {
-	_, err := which(software)
+func installProgram(program string) error {
+	_, err := which(program)
 	if err == nil {
-		warnf("\t%s is installed, skipped.", software)
+		warnf("\t%s is installed, skipped.", program)
 		return nil
 	}
 
-	cmd := exec.Command("brew", "install", software)
+	cmd := exec.Command("brew", "install", program)
 	if err := runCmd(cmd); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func installLib(lib string) error {
+	c := exec.Command("brew", "install", lib)
+	if err := runCmd(c); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func getHomeDir() (string, error) {
+	if os.Geteuid() == 0 {
+		return "/Users/" + os.Getenv("SUDO_USER"), nil
+	}
+
+	u, err := user.Current()
+	if err != nil {
+		return "", err
+	}
+
+	return u.HomeDir, nil
 }

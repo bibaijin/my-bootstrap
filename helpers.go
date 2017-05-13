@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"os/user"
 	"strings"
 )
 
@@ -40,7 +39,6 @@ func which(executable string) (string, error) {
 	cmd := exec.Command("which", executable)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		errorf("\t%s", out)
 		return "", err
 	}
 
@@ -56,15 +54,6 @@ func runCmd(cmd *exec.Cmd) error {
 	}
 
 	return nil
-}
-
-func getHomeDir() (string, error) {
-	u, err := user.Current()
-	if err != nil {
-		return "", err
-	}
-
-	return u.HomeDir, nil
 }
 
 func symlink(oldname, newname string) error {

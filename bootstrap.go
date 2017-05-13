@@ -7,48 +7,72 @@ import (
 )
 
 var (
-	toInstallSoftwares []string
-	xdgSoftwares       []string // 支持 XDG Base Directory
+	toInstallPrograms []string
+	toInstallLibs     []string
+	xdgPrograms       []string // 支持 XDG Base Directory 的软件
+	dotfiles          []string // $HOME/ 下的点文件
 )
 
 func init() {
-	xdgSoftwares = []string{
+	xdgPrograms = []string{
 		"fish",
 		"git",
+	}
+	dotfiles = []string{
+		"spacemacs",
 	}
 }
 
 func bootstrap(os string) {
 	infof("Bootstraping %s...\n", os)
 
-	infof("Installing packages...")
-	for _, software := range toInstallSoftwares {
-		infof("\tInstalling %s...", software)
-		if err := install(software); err != nil {
-			fatalf("\tInstall %s failed, error: %s.", software, err)
+	infof("Installing programs...")
+	for _, p := range toInstallPrograms {
+		infof("\tInstalling %s...", p)
+		if err := installProgram(p); err != nil {
+			fatalf("\tInstall %s failed, error: %s.", p, err)
 		} else {
-			infof("\t%s installed.", software)
+			infof("\t%s installed.", p)
 		}
 	}
-	infof("Packages installed.\n")
+	infof("Programs installed.\n")
+
+	infof("Installing librarys...")
+	for _, l := range toInstallLibs {
+		infof("\tInstalling %s...", l)
+		if err := installLib(l); err != nil {
+			fatalf("\tInstall %s failed, error: %s.", l, err)
+		} else {
+			infof("\t%s installed.", l)
+		}
+	}
+	infof("Librarys installed.\n")
 
 	infof("chsh -s $(which fish)...")
 	if err := chsh(); err != nil {
 		fatalf("chsh -s $(which fish) failed, error: %s.\n", err)
-	} else {
-		infof("chsh -s $(which fish) done.\n")
 	}
+	infof("chsh -s $(which fish) done.\n")
 
 	infof("Configuring packages support XDG base directory...")
-	for _, software := range xdgSoftwares {
-		infof("Configuring %s...", software)
-		if err := config(software); err != nil {
-			fatalf("Configure %s failed, error: %s.\n", software, err)
-		} else {
-			infof("%s configured.\n", software)
+	for _, p := range xdgPrograms {
+		infof("\tConfiguring %s...", p)
+		if err := config(p); err != nil {
+			fatalf("Configure %s failed, error: %s.\n", p, err)
 		}
+		infof("\t%s configured.", p)
 	}
-	infof("Packages support XDG base directory configured.")
+	infof("Packages support XDG base directory configured.\n")
+
+	infof("Linking dotfiles...")
+	for _, dotfile := range dotfiles {
+		infof("\tLinking %s...", dotfile)
+		if err := symlink("/dotfiles/"+dotfile, "/."+dotfile); err != nil {
+			fatalf("Link %s failed, error: %s.", dotfile, err)
+		}
+		infof("\t%s linked.", dotfile)
+	}
+	infof("Dotfiles linked.\n")
 
 	infof("%s bootstraped.", os)
 }
@@ -72,8 +96,8 @@ func chsh() error {
 	return nil
 }
 
-func config(software string) error {
-	if err := symlink("/config/fish", "/.config/"+software); err != nil {
+func config(program string) error {
+	if err := symlink("/config/"+program, "/.config/"+program); err != nil {
 		return err
 	}
 
