@@ -10,7 +10,6 @@ import (
 func init() {
 	toInstallPrograms = []string{
 		"fish",
-		"git",
 		"vim",
 		"emacs",
 	}
