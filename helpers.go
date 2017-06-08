@@ -49,11 +49,8 @@ func runCmd(cmd *exec.Cmd) error {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
-	if err := cmd.Run(); err != nil {
-		return err
-	}
 
-	return nil
+	return cmd.Run()
 }
 
 func symlink(oldname, newname string) error {

@@ -21,6 +21,7 @@ func init() {
 	}
 	dotfiles = []string{
 		"spacemacs",
+		"tmux.conf",
 	}
 }
 
@@ -58,7 +59,7 @@ func bootstrap(os string) {
 	infof("Configuring packages support XDG base directory...")
 	for _, p := range xdgPrograms {
 		infof("\tConfiguring %s...", p)
-		if err := config(p); err != nil {
+		if err := symlink("/config"+p, "/.config/"+p); err != nil {
 			fatalf("Configure %s failed, error: %s.\n", p, err)
 		}
 		infof("\t%s configured.", p)
@@ -90,17 +91,6 @@ func chsh() error {
 	}
 
 	cmd := exec.Command("chsh", "-s", fish)
-	if err := runCmd(cmd); err != nil {
-		return err
-	}
 
-	return nil
-}
-
-func config(program string) error {
-	if err := symlink("/config/"+program, "/.config/"+program); err != nil {
-		return err
-	}
-
-	return nil
+	return runCmd(cmd)
 }

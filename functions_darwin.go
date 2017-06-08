@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"os/user"
 )
 
 func init() {
@@ -34,17 +35,18 @@ func installBrew() error {
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err = resp.Body.Close(); err != nil {
+			errorf("resp.Body.Close() failed, error: %s.", err)
+		}
+	}()
 
 	cmd := exec.Command("/usr/bin/ruby", "-e")
 	cmd.Stdin = resp.Body
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	if err = cmd.Run(); err != nil {
-		return err
-	}
 
-	return nil
+	return cmd.Run()
 }
 
 func installProgram(program string) error {
@@ -55,20 +57,13 @@ func installProgram(program string) error {
 	}
 
 	cmd := exec.Command("brew", "install", program)
-	if err := runCmd(cmd); err != nil {
-		return err
-	}
 
-	return nil
+	return runCmd(cmd)
 }
 
 func installLib(lib string) error {
 	c := exec.Command("brew", "install", lib)
-	if err := runCmd(c); err != nil {
-		return err
-	}
-
-	return nil
+	return runCmd(c)
 }
 
 func getHomeDir() (string, error) {

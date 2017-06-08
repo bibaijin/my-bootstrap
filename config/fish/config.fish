@@ -43,24 +43,24 @@ function fish_prompt
   set -g __fish_git_prompt_show_informative_status true
 
   echo -n $hotpink$USER$white'@'$yellow$__fish_prompt_hostname$white
-  echo -n ' in '$limegreen(prompt_pwd)$turquoise
-  __fish_git_prompt " (%s)"
+  echo -n ' in '$limegreen(prompt_pwd)$turquoise' '
+  __fish_git_prompt "(%s) "
   echo
 
-  echo -n $white(date +'%F %T')' '$__fish_prompt_char' '$normal
+  # echo -n $white(date +'%F %T')' '$__fish_prompt_char' '$normal
 end
 
-function fish_right_prompt
-  set -l exit_code $status
-  if test $exit_code -ne 0
-    set_color red
-  else
-    set_color 666666
-  end
-  echo -n '['$exit_code']'
+# function fish_right_prompt
+#   set -l exit_code $status
+#   if test $exit_code -ne 0
+#     set_color red
+#   else
+#     set_color 666666
+#   end
+#   echo -n '['$exit_code']'
 
-  set_color normal
-end
+#   set_color normal
+# end
 
 # 别名
 alias yxapp="ssh kaizhang33@relay.creditease.corp"
