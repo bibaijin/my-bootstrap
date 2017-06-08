@@ -430,3 +430,17 @@ TSWLatexianTemp*
 
 # expex forward references with \gathertags
 *-tags.tex
+
+#############################
+### Elm
+#############################
+# elm-package generated files
+elm-stuff
+# elm-repl generated files
+repl-temp-*
+
+#############################
+### My
+#############################
+main.pdf
+.DS_Store

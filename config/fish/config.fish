@@ -64,3 +64,6 @@ end
 
 # 别名
 alias yxapp="ssh kaizhang33@relay.creditease.corp"
+
+# rbenv
+status --is-interactive; and source (rbenv init -|psub)
