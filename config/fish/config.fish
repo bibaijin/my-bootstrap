@@ -43,7 +43,7 @@ function fish_prompt
   set -g __fish_git_prompt_show_informative_status true
 
   echo -n $hotpink$USER$white'@'$yellow$__fish_prompt_hostname$white
-  echo -n ' in '$limegreen(prompt_pwd)$turquoise' '
+  echo -n ' in '$limegreen(prompt_pwd)$turquoise$normal' '
   __fish_git_prompt "(%s) "
   echo
 
@@ -66,4 +66,6 @@ end
 alias yxapp="ssh kaizhang33@relay.creditease.corp"
 
 # rbenv
-status --is-interactive; and source (rbenv init -|psub)
+if [ (uname) = "Darwin" ]
+  status --is-interactive; and source (rbenv init -|psub)
+end
